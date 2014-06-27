@@ -2,7 +2,7 @@ history.help = 'use "!history 100" to get a pm with the last 100 messages ' +
     ' from this channel'
 
 var hist_rex = /^!history ([0-9]+)$/
-var hist_help_rex = /^!history$/
+var hist_help_rex = /^!history.*$/
 var max_history = 200
 
 module.exports = history
@@ -17,11 +17,17 @@ function history(ziggy) {
     if(hist_rex.test(text)) return send_history()
     if(hist_help_rex.test(text))
     {
-        return ziggy.say(
+        ziggy.say(
             user.nick
           , 'Usage: To get the last 10 lines of chat messages, use the ' +
-          ' command `!history 10`'
+          'command `!history 10`'
         )
+        ziggy.say(
+            user.nick
+          , 'History plugin by jammaloo, submit bugs to ' + 
+          'https://github.com/jammaloo/ziggy-history/issues'
+        )
+        return
     }
 
     //store the messages

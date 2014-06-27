@@ -5,7 +5,7 @@ var test = require('tape')
 var plugin = require('../')
 
 test('gives help text', function(t) {
-  t.plan(2)
+  t.plan(18)
 
   var ziggy = new EE()
 
@@ -13,11 +13,20 @@ test('gives help text', function(t) {
 
   plugin(ziggy)
 
+  var message_counter = 0;
+
   ziggy.emit('message', {nick: 'derp'}, 'herp', '!history')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!historyfkasjlsdf')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 10!iasdf')
 
   function check_output(channel, text) {
-    t.equal(text, 'Usage: To get the last 10 lines of chat messages, use the ' +
-    ' command `!history 10`', 'Says help command')
+    message_counter++
+    message_text = (message_counter % 2 == 1) ? 'Usage: To get the last 10 ' +
+    'lines of chat messages, use the command `!history 10`' : 'History ' +
+    'plugin by jammaloo, submit bugs to ' + 
+          'https://github.com/jammaloo/ziggy-history/issues'
+    t.notEqual(message_counter, 7, 'Only says 6 things')
+    t.equal(text, message_text, 'Says help command')
     t.equal(channel, 'derp', 'Says to user')
   }
 })
