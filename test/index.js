@@ -123,3 +123,21 @@ test('splits long messages', function(t) {
     return message
   }
 })
+
+test('Warns if no history', function(t) {
+  t.plan(2)
+
+  var ziggy = new EE()
+
+  ziggy.say = check_output
+
+  plugin(ziggy)
+
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 1')
+
+  function check_output(channel, text) {
+
+    t.equal(text, "Sorry, I do not have any history from the herp channel", 'Warns about no history')
+    t.equal(channel, 'derp', 'Says to user')
+  }
+})

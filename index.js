@@ -41,8 +41,8 @@ function history(ziggy) {
 
       if(!previous)
       {
-          ziggy.say(user.nick, 'Sorry, I do not have any history from this ' + 
-          'channel')
+          ziggy.say(user.nick, 'Sorry, I do not have any history from the ' + 
+          channel + ' channel')
           return
       }
 
