@@ -43,3 +43,25 @@ test('gives history', function(t) {
     t.equal(channel, 'derp', 'Says to user')
   }
 })
+
+test('gives partial history', function(t) {
+  t.plan(3)
+
+  var ziggy = new EE()
+
+  ziggy.say = check_output
+
+  plugin(ziggy)
+
+  var num_messages = 0
+
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 2')
+
+  function check_output(channel, text) {
+    num_messages++
+    t.equal(num_messages, 1, 'Says only one line')
+    t.equal(text, "derp: 1", 'Says only partial history')
+    t.equal(channel, 'derp', 'Says to user')
+  }
+})
