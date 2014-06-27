@@ -65,3 +65,43 @@ test('gives partial history', function(t) {
     t.equal(channel, 'derp', 'Says to user')
   }
 })
+
+test('splits long messages', function(t) {
+  t.plan(6)
+
+  var ziggy = new EE()
+
+  ziggy.say = check_output
+
+  plugin(ziggy)
+
+  var message_counter = 0
+
+  ziggy.emit('message', {nick: 'derp'}, 'herp', build_large_message())
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 1')
+
+  function check_output(channel, text) {
+    message_counter++
+    if(message_counter == 1) {
+      var message_text = 'derp: '
+    }
+    else {
+      var message_text = build_large_message()
+    }
+
+    t.notEqual(message_counter, 3, 'Only 2 lines')
+    t.equal(text, message_text, 'Splits message across multiple lines')
+    t.equal(channel, 'derp', 'Says to user')
+  }
+
+  function build_large_message()
+  {
+    var message_size = 512
+    var message = ''
+    for(var i = 0; i < message_size; i++)
+    {
+      message += i % 10
+    }
+    return message
+  }
+})
