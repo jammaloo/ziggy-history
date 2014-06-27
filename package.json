@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "history retrieval plugin for ziggy irc bot",
   "main": "index.js",
+  "scripts": {
+    "test": "tape test/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:jammaloo/ziggy-history.git"
@@ -17,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/jammaloo/ziggy-history/issues"
   },
-  "homepage": "https://github.com/jammaloo/ziggy-history"
+  "homepage": "https://github.com/jammaloo/ziggy-history",
+  "devDependencies": {
+    "tape": "2.12.3"
+  }
 }
