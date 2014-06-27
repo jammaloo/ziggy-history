@@ -69,13 +69,11 @@ test('gives partial history', function(t) {
 
   function check_output(channel, text) {
     num_messages++
-    if(num_messages == 1)
-    {
+    if(num_messages == 1) {
       var message_text = 'Sorry, I only have 1 line(s) of history from the ' +
       'herp channel'
     }
-    else
-    {
+    else {
       var message_text = "derp: 1"
     }
     t.notEqual(num_messages, 3, 'Says only one line')
@@ -116,8 +114,7 @@ test('splits long messages', function(t) {
   {
     var message_size = 512
     var message = ''
-    for(var i = 0; i < message_size; i++)
-    {
+    for(var i = 0; i < message_size; i++) {
       message += i % 10
     }
     return message

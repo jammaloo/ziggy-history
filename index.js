@@ -15,8 +15,7 @@ function history(ziggy) {
   function parse_message(user, channel, text) {
     //if this is a history request, then we don't need to save the message
     if(hist_rex.test(text)) return send_history()
-    if(hist_help_rex.test(text))
-    {
+    if(hist_help_rex.test(text)) {
         ziggy.say(
             user.nick
           , 'Usage: To get the last 10 lines of chat messages, use the ' +
@@ -39,8 +38,7 @@ function history(ziggy) {
     function send_history() {
       var previous = messages[channel]
 
-      if(!previous)
-      {
+      if(!previous) {
           ziggy.say(user.nick, 'Sorry, I do not have any history from the ' + 
           channel + ' channel')
           return
@@ -49,21 +47,18 @@ function history(ziggy) {
       var parts = text.match(hist_rex)
 
       var history = previous.slice(-parts[1])
-      if(history.length != parts[1])
-      {
+      if(history.length != parts[1]) {
           ziggy.say(user.nick, 'Sorry, I only have ' + history.length + 
           ' line(s) of history from the ' + channel + ' channel')
       }
 
       //send each line of history as a pm nick: message
-      history.forEach(function sendHistoryLine(message)
-      {
+      history.forEach(function sendHistoryLine(message) {
         var prefix = message.nick + ': '
         var text = message.text
         //if the prefix and the message exceed the max message length
         //then split the message into two
-        if(prefix.length + text.length > 512)
-        {
+        if(prefix.length + text.length > 512) {
           ziggy.say(
               user.nick
             , prefix
