@@ -5,8 +5,8 @@ use ziggy to catch up on what you have missed
 
 ## usage
 
-saying `!history #learnjavascript 100` will cause ziggy to pm you with the last
-100 lines of messages rom the #learnjavascript channel
+saying `!history 100` will cause ziggy to pm you with the last 100 lines of
+messages from the current channel
 
 ## license
 
