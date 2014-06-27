@@ -3,7 +3,7 @@ history.help = 'use "!history 100" to get a pm with the last 100 messages ' +
 
 var hist_rex = /^!history ([0-9]+)$/
 var hist_help_rex = /^!history.*$/
-var max_history = 200
+var max_history = 1000
 
 module.exports = history
 
@@ -49,6 +49,11 @@ function history(ziggy) {
       var parts = text.match(hist_rex)
 
       var history = previous.slice(-parts[1])
+      if(history.length != parts[1])
+      {
+          ziggy.say(user.nick, 'Sorry, I only have ' + history.length + 
+          ' line(s) of history from the ' + channel + ' channel')
+      }
 
       //send each line of history as a pm nick: message
       history.forEach(function sendHistoryLine(message)
