@@ -1,6 +1,8 @@
 ziggy-history
 ====
 
+[![Build Status](https://travis-ci.org/jammaloo/ziggy-history)](https://travis-ci.org/jammaloo/ziggy-history)
+
 use ziggy to catch up on what you have missed
 
 ## usage
