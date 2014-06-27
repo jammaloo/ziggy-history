@@ -21,3 +21,25 @@ test('gives help text', function(t) {
     t.equal(channel, 'derp', 'Says to user')
   }
 })
+
+test('gives history', function(t) {
+  t.plan(4)
+
+  var ziggy = new EE()
+
+  ziggy.say = check_output
+
+  plugin(ziggy)
+
+  var first_message = true
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 2')
+
+  function check_output(channel, text) {
+    var test_text = (first_message) ? "derp: 1" : "derp: 2"
+    first_message = false;
+    t.equal(text, test_text, 'Says correct history')
+    t.equal(channel, 'derp', 'Says to user')
+  }
+})
