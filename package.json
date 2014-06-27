@@ -1,0 +1,21 @@
+{
+  "name": "ziggy-history",
+  "version": "0.0.1",
+  "description": "history retrieval plugin for ziggy irc bot",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jammaloo/ziggy-history.git"
+  },
+  "keywords": [
+    "ziggy",
+    "history",
+    "plugin"
+  ],
+  "author": "james freeman <me@jammaloo.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jammaloo/ziggy-history/issues"
+  },
+  "homepage": "https://github.com/jammaloo/ziggy-history"
+}
