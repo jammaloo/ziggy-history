@@ -44,10 +44,11 @@ function history(ziggy) {
           return
       }
 
-      var parts = text.match(hist_rex)
+      var lines_requested = text.match(hist_rex)[1]
+      if(lines_requested == 0) lines_requested = 1
 
-      var history = previous.slice(-parts[1])
-      if(history.length != parts[1]) {
+      var history = previous.slice(-lines_requested)
+      if(history.length != lines_requested) {
           ziggy.say(user.nick, 'Sorry, I only have ' + history.length + 
           ' line(s) of history from the ' + channel + ' channel')
       }

@@ -53,6 +53,25 @@ test('gives history', function(t) {
   }
 })
 
+test('gives 1 line to !history 0 command', function(t) {
+  t.plan(2)
+
+  var ziggy = new EE()
+
+  ziggy.say = check_output
+
+  plugin(ziggy)
+
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 0')
+
+  function check_output(channel, text) {
+    t.equal(text, "derp: 2", 'Says correct history')
+    t.equal(channel, 'derp', 'Says to user')
+  }
+})
+
 test('gives partial history', function(t) {
   t.plan(6)
 
