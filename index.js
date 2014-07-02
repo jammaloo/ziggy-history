@@ -37,7 +37,11 @@ history_plugin.parseCommand = function(user, channel, text) {
     var self = history_plugin
     if(!self.messages[channel]) self.messages[channel] = []
     //if this is a history request, then we don't need to save the message
-    if(hist_rex.test(text)) return self.sendHistory(user, channel, text)
+    if(hist_rex.test(text)) {
+        var lines_requested = text.match(hist_rex)[1]
+        if(lines_requested == 0) lines_requested = 1
+        return self.sendHistory(user, channel, text, lines_requested)
+    }
     if(hist_commands_rex.test(text)) return self.parseCommandType(user, channel, text)
     //if it matches the help text
     if(hist_help_rex.test(text)) return self.sendHelp(user)
@@ -47,7 +51,7 @@ history_plugin.parseCommand = function(user, channel, text) {
     if(self.messages[channel].length > max_history) self.messages[channel].shift()
 }
 
-history_plugin.sendHistory = function(user, channel, text) {
+history_plugin.sendHistory = function(user, channel, text, lines_requested, filter) {
   var self = history_plugin
   var previous = self.messages[channel]
 
@@ -57,10 +61,9 @@ history_plugin.sendHistory = function(user, channel, text) {
       return
   }
 
-  var lines_requested = text.match(hist_rex)[1]
-  if(lines_requested == 0) lines_requested = 1
+  if(typeof lines_requested == 'undefined') lines_requested = 0
 
-  var history = self.getHistory(channel, lines_requested)
+  var history = self.getHistory(channel, lines_requested, filter)
   if(history.length != lines_requested) {
       self.ziggy.say(user.nick, 'Sorry, I only have ' + history.length +
       ' line(s) of history from the ' + channel + ' channel')
@@ -105,9 +108,10 @@ history_plugin.extractMessage = function(message) {
 }
 
 //grab the needed lines of history
-history_plugin.getHistory = function(channel, lines_requested) {
+history_plugin.getHistory = function(channel, lines_requested, filter) {
   var self = history_plugin
-  return self.messages[channel].slice(-lines_requested)
+  var messages = (typeof filter == 'undefined') ? self.messages[channel] : self.messages[channel].filter(filter)
+  return messages.slice(-lines_requested)
 }
 
 history_plugin.saveHistory = function(user, channel, text) {

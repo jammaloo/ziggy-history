@@ -209,3 +209,33 @@ test('Saves history correctly', function(t) {
     t.equal(user, 'derp', 'Sends to correct user')
   }
 })
+
+test('getHistory filters messages correctly', function(t) {
+    t.plan(1)
+
+    var ziggy = new EE()
+
+    ziggy.say = function noop() {}
+
+    var getHistory = plugin.getHistory
+
+    plugin.getHistory = function testFilter(channel, lines_requested, filter) {
+        var filtered_messages = getHistory(channel, lines_requested, function filterMessages(message) {
+            return message['text'] == '1'
+        })
+        check_filter(filtered_messages)
+        return filtered_messages
+    }
+    plugin(ziggy)
+
+    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+    ziggy.emit('message', {nick: 'derp'}, 'herp', '2')
+    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+    ziggy.emit('message', {nick: 'derp'}, 'herp', '3')
+    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+    ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 2')
+
+    function check_filter(messages) {
+        t.equal(JSON.stringify(messages), JSON.stringify([{'nick': 'derp', 'text': '1'}, {'nick': 'derp', 'text': '1'}]), 'Filters messages correctly')
+    }
+})
