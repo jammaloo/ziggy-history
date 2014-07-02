@@ -4,6 +4,8 @@ var test = require('tape')
 
 var plugin = require('../')
 
+var q = require('q')
+
 test('gives help text', function(t) {
   t.plan(18)
 
@@ -141,19 +143,69 @@ test('splits long messages', function(t) {
 })
 
 test('Warns if no history', function(t) {
+  t.plan(4)
+
+  var ziggy = new EE()
+
+  ziggy.say = check_output
+
+  plugin.pastebin_dev_key = 'test'
+  plugin(ziggy)
+
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history save')
+
+  function check_output(channel, text) {
+
+    t.equal(text, "Sorry, I do not have any history from the herp channel", 'Warns about no history')
+    t.equal(channel, 'derp', 'Says to user')
+  }
+})
+
+test('Warns saving history is disabled if no dev key set', function(t) {
   t.plan(2)
 
   var ziggy = new EE()
 
   ziggy.say = check_output
 
+  plugin.pastebin_dev_key = null
   plugin(ziggy)
 
-  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history save')
 
   function check_output(channel, text) {
+      t.equal(text, "Saving history isn't enabled, ask the maintainer to enable it", 'Warns that history is disabled')
+      t.equal(channel, 'derp', 'Says to user')
+  }
+})
 
-    t.equal(text, "Sorry, I do not have any history from the herp channel", 'Warns about no history')
-    t.equal(channel, 'derp', 'Says to user')
+test('Saves history correctly', function(t) {
+  t.plan(4)
+
+  var ziggy = new EE()
+
+  ziggy.say = check_output
+  plugin.createHistoryFile = check_history
+
+  plugin.pastebin_dev_key = 'test'
+  plugin(ziggy)
+
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history save')
+
+  function check_history(channel, text) {
+    t.equal(text, 'derp: 1\nderp: 2', 'Warns that history is disabled')
+    t.equal(channel, 'herp', 'Saves for correct channel')
+    var promise = q.defer()
+    promise.resolve('test url')
+    return promise.promise
+  }
+
+  function check_output(user, url) {
+    t.equal(url, 'This URL will self destruct in 10 Minutes: test url', 'Sends correct URL')
+    t.equal(user, 'derp', 'Sends to correct user')
   }
 })

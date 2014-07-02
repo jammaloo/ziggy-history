@@ -21,7 +21,11 @@
     "url": "https://github.com/jammaloo/ziggy-history/issues"
   },
   "homepage": "https://github.com/jammaloo/ziggy-history",
+  "dependencies": {
+    "pastebin-js": "*"
+  },
   "devDependencies": {
-    "tape": "2.12.3"
+    "tape": "2.12.3",
+    "q": "*"
   }
 }
