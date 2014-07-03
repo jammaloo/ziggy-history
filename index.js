@@ -2,7 +2,7 @@ history_plugin.help = 'use `!history 100` to get a pm with the last 100 messages
     ' from this channel'
 
 var hist_rex = /^!history ([0-9]+)$/
-var hist_commands_rex = /^!history ([a-zA-Z]+) ?([a-zA-Z0-9]+)?$/
+var hist_commands_rex = /^!history ([a-zA-Z]+) ?([a-zA-Z0-9]+)? ?([a-zA-Z0-9]+)?$/
 var hist_help_rex = /^!history.*$/
 var max_history = 1000
 
@@ -98,6 +98,16 @@ history_plugin.sendHelp = function(user) {
   )
   self.ziggy.say(
     user.nick
+    , 'Usage: To get a file with chat messages in it, say ' +
+        'command `!history save`'
+  )
+  self.ziggy.say(
+    user.nick
+    , 'Usage: To get 10 lines of chat messages from Jammaloo say ' +
+      'command `!history nick Jammaloo 10`'
+  )
+  self.ziggy.say(
+    user.nick
     , 'History plugin by jammaloo, submit bugs to ' +
     'https://github.com/jammaloo/ziggy-history/issues'
   )
@@ -147,6 +157,8 @@ history_plugin.parseCommandType = function(user, message, text) {
   switch(command_parts[1]) {
     case 'save':
       return self.saveHistory(user, message, text)
+    case 'nick':
+      return self.sendHistory(user, message, text, command_parts[3] , function nickFilter(message) { return message.nick == command_parts[2] })
   }
   return self.sendHelp(user)
 }
