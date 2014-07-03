@@ -2,7 +2,7 @@ history_plugin.help = 'use `!history 100` to get a pm with the last 100 messages
     ' from this channel'
 
 var hist_rex = /^!history ([0-9]+)$/
-var hist_commands_rex = /^!history ([a-zA-Z]+) ?([a-zA-Z0-9]+)? ?([a-zA-Z0-9]+)?$/
+var hist_commands_rex = /^!history ([^ ]+) ?([^ ]+)? ?([^ ]+)?$/
 var hist_help_rex = /^!history.*$/
 var max_history = 1000
 
