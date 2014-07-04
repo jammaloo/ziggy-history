@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/jammaloo/ziggy-history",
   "dependencies": {
-    "pastebin-js": "*"
+    "pastebin-js": ">= 0.1.6"
   },
   "devDependencies": {
     "tape": "2.12.3",
