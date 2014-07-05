@@ -158,7 +158,7 @@ history_plugin.parseCommandType = function(user, message, text) {
     case 'save':
       return self.saveHistory(user, message, text)
     case 'nick':
-      return self.sendHistory(user, message, text, command_parts[3] , function nickFilter(message) { return message.nick == command_parts[2] })
+      return self.sendHistory(user, message, text, command_parts[3] , function nickFilter(message) { return message.nick.toLowerCase() == command_parts[2].toLowerCase() })
   }
   return self.sendHelp(user)
 }

@@ -259,7 +259,7 @@ test('can request by nick', function(t) {
     ziggy.emit('message', {nick: 'derp2'}, 'herp', '2')
     ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
     ziggy.emit('message', {nick: 'derp2'}, 'herp', '2')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '!history nick derp 2')
+    ziggy.emit('message', {nick: 'derp'}, 'herp', '!history nick dERp 2')
 
     function check_output(channel, text) {
         t.equal(text, 'derp: 1', 'Says correct history')
