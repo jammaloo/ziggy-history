@@ -1,5 +1,5 @@
 history_plugin.help = 'This plugin stores chat history, so users can catch ' +
-  'up on missed messages. Type `!history help` in chat to view commands
+  'up on missed messages. Type `!history help` in chat to view commands'
 
 var hist_rex = /^!history ([0-9]+)$/
 var hist_commands_rex = /^!history ([^ ]+) ?([^ ]+)? ?([^ ]+)?$/
