@@ -1,6 +1,6 @@
 {
   "name": "ziggy-history",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "history retrieval plugin for ziggy irc bot",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/jammaloo/ziggy-history",
   "dependencies": {
-    "pastebin-js": ">= 0.1.6"
+    "pastebin-js": "*"
   },
   "devDependencies": {
     "tape": "2.12.3",

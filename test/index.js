@@ -7,27 +7,29 @@ var plugin = require('../')
 var q = require('q')
 
 test('send help text', function(t) {
-    t.plan(3)
+  t.plan(5)
 
-    var ziggy = new EE()
+  var ziggy = new EE()
 
-    ziggy.say = function noop() {}
+  ziggy.say = function noop() {}
 
-    var getHistory = plugin.sendHelp
+  var getHistory = plugin.sendHelp
 
-    plugin.sendHelp = check_help
-    plugin(ziggy)
+  plugin.sendHelp = check_help
+  plugin(ziggy)
 
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '!history')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '!history fasdfdsaf')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '!historyfasdfd')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history fasdfdsaf')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history nick')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history nick banana')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history nick banana test')
 
-    //reset getHistory function
-    plugin.sendHelp = getHistory
+  //reset getHistory function
+  plugin.sendHelp = getHistory
 
-    function check_help() {
-        t.pass('Send help')
-    }
+  function check_help() {
+    t.pass('Send help')
+  }
 })
 
 test('gives history', function(t) {
@@ -89,7 +91,7 @@ test('gives partial history', function(t) {
     num_messages++
     if(num_messages == 1) {
       var message_text = 'Sorry, I only have 1 line(s) of history from the ' +
-      'herp channel'
+        'herp channel'
     }
     else {
       var message_text = "derp: 1"
@@ -173,8 +175,8 @@ test('Warns saving history is disabled if no dev key set', function(t) {
   ziggy.emit('message', {nick: 'derp'}, 'herp', '!history save')
 
   function check_output(channel, text) {
-      t.equal(text, "Saving history isn't enabled, ask the maintainer to enable it", 'Warns that history is disabled')
-      t.equal(channel, 'derp', 'Says to user')
+    t.equal(text, "Saving history isn't enabled, ask the maintainer to enable it", 'Warns that history is disabled')
+    t.equal(channel, 'derp', 'Says to user')
   }
 })
 
@@ -212,57 +214,57 @@ test('Saves history correctly', function(t) {
 })
 
 test('getHistory filters messages correctly', function(t) {
-    t.plan(1)
+  t.plan(1)
 
-    var ziggy = new EE()
+  var ziggy = new EE()
 
-    ziggy.say = function noop() {}
+  ziggy.say = function noop() {}
 
-    var getHistory = plugin.getHistory
+  var getHistory = plugin.getHistory
 
-    plugin.getHistory = function testFilter(channel, lines_requested, filter) {
-        var filtered_messages = getHistory(channel, lines_requested, function filterMessages(message) {
-            return message['text'] == '1'
-        })
-        check_filter(filtered_messages)
-        return filtered_messages
-    }
-    plugin(ziggy)
+  plugin.getHistory = function testFilter(channel, lines_requested, filter) {
+    var filtered_messages = getHistory(channel, lines_requested, function filterMessages(message) {
+      return message['text'] == '1'
+    })
+    check_filter(filtered_messages)
+    return filtered_messages
+  }
+  plugin(ziggy)
 
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '2')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '3')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '3')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 2')
 
-    //reset getHistory function
-    plugin.getHistory = getHistory
+  //reset getHistory function
+  plugin.getHistory = getHistory
 
-    function check_filter(messages) {
-        t.equal(JSON.stringify(messages), JSON.stringify([{'nick': 'derp', 'text': '1'}, {'nick': 'derp', 'text': '1'}]), 'Filters messages correctly')
-    }
+  function check_filter(messages) {
+    t.equal(JSON.stringify(messages), JSON.stringify([{'nick': 'derp', 'text': '1'}, {'nick': 'derp', 'text': '1'}]), 'Filters messages correctly')
+  }
 })
 
 test('can request by nick', function(t) {
-    t.plan(4)
+  t.plan(4)
 
-    var ziggy = new EE()
+  var ziggy = new EE()
 
-    ziggy.say = check_output
+  ziggy.say = check_output
 
-    plugin(ziggy)
+  plugin(ziggy)
 
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
-    ziggy.emit('message', {nick: 'derp2'}, 'herp', '2')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
-    ziggy.emit('message', {nick: 'derp2'}, 'herp', '2')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
-    ziggy.emit('message', {nick: 'derp2'}, 'herp', '2')
-    ziggy.emit('message', {nick: 'derp'}, 'herp', '!history nick dERp 2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp2'}, 'herp', '2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp2'}, 'herp', '2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
+  ziggy.emit('message', {nick: 'derp2'}, 'herp', '2')
+  ziggy.emit('message', {nick: 'derp'}, 'herp', '!history nick dERp 2')
 
-    function check_output(channel, text) {
-        t.equal(text, 'derp: 1', 'Says correct history')
-        t.equal(channel, 'derp', 'Says to user')
-    }
+  function check_output(channel, text) {
+    t.equal(text, 'derp: 1', 'Says correct history')
+    t.equal(channel, 'derp', 'Says to user')
+  }
 })
