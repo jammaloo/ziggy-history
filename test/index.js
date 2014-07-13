@@ -181,7 +181,7 @@ test('Warns saving history is disabled if no dev key set', function(t) {
 })
 
 test('Saves history correctly', function(t) {
-  t.plan(4)
+  t.plan(6)
 
   var ziggy = new EE()
 
@@ -200,15 +200,24 @@ test('Saves history correctly', function(t) {
   plugin.createHistoryFile = create_history
 
   function check_history(channel, text) {
-    t.equal(text, 'derp: 1\nderp: 2', 'Warns that history is disabled')
+    t.equal(text, 'derp: 2\nderp: 1', 'Warns that history is disabled')
     t.equal(channel, 'herp', 'Saves for correct channel')
     var promise = q.defer()
     promise.resolve('test url')
     return promise.promise
   }
-
+  var message_count = 0
   function check_output(user, url) {
-    t.equal(url, 'This URL will self destruct in 10 Minutes: test url', 'Sends correct URL')
+    switch(message_count) {
+      case 0:
+        var message = 'This URL will self destruct in 10 Minutes: test url' 
+        break
+      case 1:
+        var message = 'Newest messages are at the top, oldest at the bottom'
+        break
+    }
+    message_count++
+    t.equal(url, message, 'Sends correct URL')
     t.equal(user, 'derp', 'Sends to correct user')
   }
 })

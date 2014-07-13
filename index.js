@@ -174,7 +174,9 @@ history_plugin.saveHistory = function(user, channel) {
     return
   }
 
-  var history_string = history.map(self.extractMessage).join('\n')
+  var history_string = history.map(self.extractMessage)
+  history_string.reverse()
+  history_string = history_string.join('\n')
 
   self.createHistoryFile(channel, history_string)
     .then(function(url) { self.sendSavedUrl(user, url) })
@@ -192,6 +194,7 @@ history_plugin.createHistoryFile = function(channel, history_string) {
 history_plugin.sendSavedUrl = function(user, url) {
   var self = history_plugin
   self.ziggy.say(user.nick, 'This URL will self destruct in 10 Minutes: ' + url)
+  self.ziggy.say(user.nick, 'Newest messages are at the top, oldest at the bottom')
 }
 
 //apologise for error and dump it to console
