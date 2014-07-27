@@ -1,34 +1,46 @@
 history_plugin.help = 'use `!history 100` to get a pm with the last 100 messages ' +
   ' from this channel'
 
-history_plugin.max_history = 1000
-
-//replace this with your pastebin api key to enable saving files
-history_plugin.pastebin_dev_key = null
-
 history_plugin.history_command_prefix = '!history'
 
 module.exports = history_plugin
 
-function history_plugin(ziggy) {
+
+function history_plugin(ziggy, settings) {
   var self = history_plugin
   self.messages = {}
   self.ziggy = ziggy
+  self.setDefaultSettings(settings)
   self.ziggy.on('message', self.parseCommand)
 
-  //a key value pair of enabled features
-  self.features = {
-    "save_history": true
-  }
-
   //disable pastebin if no dev key is set
-  if(self.pastebin_dev_key == null && self.features['save_history']) {
+  if(self.settings.pastebin_dev_key == null && self.settings.saving_enabled) {
     console.log("Please set pastebin dev key to enable pastebin support")
-    self.features['save_history'] = false
+    self.settings.saving_enabled = false
   }
-  if(self.features['save_history']) {
+  if(self.settings.saving_enabled) {
     PasteBinAPI = require('pastebin-js'),
-      self.pastebin = new PasteBinAPI(self.pastebin_dev_key)
+      self.pastebin = new PasteBinAPI(self.settings.pastebin_dev_key)
+  }
+}
+
+//checks if history parameters were set in ziggy, and sets defaults otherwise
+history_plugin.setDefaultSettings = function(settings) {
+  var self = history_plugin
+  self.settings = {
+     //sets what the history command is
+     history_command_prefix: '!history'
+     //sets the max number of lines stored per channel
+    ,max_history: 1000
+    //enables saving of history
+    ,saving_enabled: false
+    //should be set to the pastebin api key for the bot
+    ,pastebin_dev_key: null
+  }
+  if (typeof settings == "undefined") return
+  for (var setting in self.settings) {
+    if (typeof settings[setting] == "undefined") continue
+    self.settings[setting] = settings[setting]
   }
 }
 
@@ -41,11 +53,11 @@ history_plugin.parseCommand = function(user, channel, text) {
   var message_parts = text.split(' ')
 
   //not a history command, so just save the message
-  if(message_parts.shift() != self.history_command_prefix) {
+  if(message_parts.shift() != self.settings.history_command_prefix) {
     //store the messages
     self.messages[channel].push({'nick': user.nick, 'text': text})
     //once maximum messages for channel is reached start replacing old messages
-    if(self.messages[channel].length > self.max_history) self.messages[channel].shift()
+    if(self.messages[channel].length > self.settings.max_history) self.messages[channel].shift()
     return
   }
 
@@ -159,7 +171,7 @@ history_plugin.getHistory = function(channel, lines_requested, filter) {
 
 history_plugin.saveHistory = function(user, channel) {
   var self = history_plugin
-  if(!self.features['save_history']) {
+  if(!self.settings.saving_enabled) {
     self.ziggy.say(user.nick, 'Saving history isn\'t enabled, ask the ' +
       'maintainer to enable it')
     return

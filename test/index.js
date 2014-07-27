@@ -148,8 +148,9 @@ test('Warns if no history', function(t) {
 
   ziggy.say = check_output
 
-  plugin.pastebin_dev_key = 'test'
   plugin(ziggy)
+  plugin.settings.pastebin_dev_key = 'test'
+  plugin.settings.saving_enabled = true
 
   ziggy.emit('message', {nick: 'derp'}, 'herp', '!history 1')
   ziggy.emit('message', {nick: 'derp'}, 'herp', '!history save')
@@ -168,7 +169,7 @@ test('Warns saving history is disabled if no dev key set', function(t) {
 
   ziggy.say = check_output
 
-  plugin.pastebin_dev_key = null
+  plugin.settings.pastebin_dev_key = null
   plugin(ziggy)
 
   ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
@@ -190,8 +191,9 @@ test('Saves history correctly', function(t) {
   var create_history = plugin.createHistoryFile
   plugin.createHistoryFile = check_history
 
-  plugin.pastebin_dev_key = 'test'
   plugin(ziggy)
+  plugin.settings.pastebin_dev_key = 'test'
+  plugin.settings.saving_enabled = 'test'
 
   ziggy.emit('message', {nick: 'derp'}, 'herp', '1')
   ziggy.emit('message', {nick: 'derp'}, 'herp', '2')
