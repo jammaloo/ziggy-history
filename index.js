@@ -152,7 +152,7 @@ history_plugin.sendHistory = function(user, channel, lines_requested, filter) {
       return self.user_locks.splice(self.user_locks.indexOf(user.nick), 1)
     }
 
-    setTimeout(sayHistory, self.settings.timeout)
+    setTimeout(sayHistory, self.settings.timeout * 1000)
   }
 }
 
