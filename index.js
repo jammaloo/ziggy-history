@@ -5,11 +5,11 @@ history_plugin.history_command_prefix = '!history'
 
 module.exports = history_plugin
 
-
 function history_plugin(ziggy, settings) {
   var self = history_plugin
   self.messages = {}
   self.ziggy = ziggy
+  self.user_locks = []
   self.setDefaultSettings(settings)
   self.ziggy.on('message', self.parseCommand)
 
@@ -32,6 +32,10 @@ history_plugin.setDefaultSettings = function(settings) {
      history_command_prefix: '!history'
      //sets the max number of lines stored per channel
     ,max_history: 1000
+    //sets number of lines of history to send per message
+    ,per_message: 5
+    //sets time in seconds to timeout between messages
+    ,timeout: 5
     //enables saving of history
     ,saving_enabled: false
     //should be set to the pastebin api key for the bot
@@ -100,11 +104,15 @@ history_plugin.sendHistory = function(user, channel, lines_requested, filter) {
   var self = history_plugin
   var previous = self.messages[channel]
 
+  if(self.user_locks.indexOf(user.nick) > -1) return
+
   if(previous.length == 0) {
     self.ziggy.say(user.nick, 'Sorry, I do not have any history from the ' +
       channel + ' channel')
     return
   }
+
+  self.user_locks.push(user.nick)
 
   if(typeof lines_requested == 'undefined') lines_requested = 0
 
@@ -114,24 +122,38 @@ history_plugin.sendHistory = function(user, channel, lines_requested, filter) {
       ' line(s) of history from the ' + channel + ' channel')
   }
 
-  //send each line of history as a pm nick: message
-  history.forEach(function sendHistoryLine(message) {
-    var prefix = message.nick + ': '
-    var text = message.text
-    //if the prefix and the message exceed the max message length
-    //then split the message into two
-    if(prefix.length + text.length > 512) {
+  sayHistory()
+
+  function sayHistory() {
+    //send each line of history as a pm nick: message
+    history.slice(0, self.settings.per_message).forEach(sendHistoryLine)
+    
+    function sendHistoryLine(message) {
+      var prefix = message.nick + ': '
+      var text = message.text
+      //if the prefix and the message exceed the max message length
+      //then split the message into two
+      if(prefix.length + text.length > 512) {
+        self.ziggy.say(
+          user.nick
+          , prefix
+        )
+        prefix = ''
+      }
       self.ziggy.say(
         user.nick
-        , prefix
+        , prefix + text
       )
-      prefix = ''
     }
-    self.ziggy.say(
-      user.nick
-      , prefix + text
-    )
-  })
+
+    history = history.slice(self.settings.per_message)
+
+    if(!history.length) {
+      return self.user_locks.splice(self.user_locks.indexOf(user.nick), 1)
+    }
+
+    setTimeout(sayHistory, self.settings.timeout)
+  }
 }
 
 history_plugin.sendHelp = function(user) {
