@@ -1,6 +1,6 @@
 {
   "name": "ziggy-history",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "history retrieval plugin for ziggy irc bot",
   "main": "index.js",
   "scripts": {
